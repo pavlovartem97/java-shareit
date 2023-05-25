@@ -9,12 +9,12 @@ import javax.validation.constraints.NotEmpty;
 public class UserCreateDto {
 
     /** Имя пользователя */
-    @NotEmpty
+    @NotEmpty(message = "User name is null or empty")
     String name;
 
     /** Адрес электронной почты */
-    @Email
-    @NotEmpty
+    @Email(message = "User email is not valid")
+    @NotEmpty(message = "User name is null or empty")
     String email;
 
 }

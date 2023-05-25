@@ -12,7 +12,7 @@ public class UserUpdateDto {
     String name;
 
     /** Адрес электронной почты */
-    @Email
+    @Email(message = "User email is not valid")
     @Nullable
     String email;
 }
