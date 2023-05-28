@@ -4,13 +4,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Repository
-public class UserDaoInMemoryImpl implements UserDao {
+public class InMemoryUserDao implements UserDao {
 
     private final Map<Long, User> users = new TreeMap<>();
     private long lastIdCounter = 1L;
@@ -38,13 +37,20 @@ public class UserDaoInMemoryImpl implements UserDao {
     }
 
     @Override
-    public Set<String> findAllEmail() {
-        return users.values().stream().map(User::getEmail).collect(Collectors.toUnmodifiableSet());
+    public boolean existByEmail(String email) {
+        return users.values().stream()
+                .map(User::getEmail)
+                .anyMatch(val -> Objects.equals(val, email));
     }
 
     @Override
     public Collection<User> findAll() {
         return users.values();
+    }
+
+    @Override
+    public boolean contains(long userId) {
+        return users.containsKey(userId);
     }
 
 }

@@ -23,34 +23,36 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    private final static String USER_ID_HEADER = "X-Sharer-User-Id";
+
     @PostMapping
     public ItemDtoOut addItem(@RequestBody @Valid ItemDtoIn dto,
-                              @RequestHeader("X-Sharer-User-Id") long userId) {
+                              @RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.addItem(dto, userId);
     }
 
     @PatchMapping("{itemId}")
     public ItemDtoOut updateItem(@RequestBody ItemDtoIn dto,
                                  @PathVariable("itemId") long itemId,
-                                 @RequestHeader("X-Sharer-User-Id") long userId) {
+                                 @RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.updateItem(dto, itemId, userId);
     }
 
     @GetMapping("{itemId}")
     public ItemDtoOut getItem(@PathVariable("itemId") long itemId,
-                              @RequestHeader("X-Sharer-User-Id") long userId) {
+                              @RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.getItem(itemId);
     }
 
     @GetMapping
-    public Collection<ItemDtoOut> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public Collection<ItemDtoOut> getItems(@RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.getAllItemsByUserId(userId);
     }
 
     @GetMapping("search")
-    public Collection<ItemDtoOut> search(@RequestHeader("X-Sharer-User-Id") long userId,
-                                         @RequestParam("text") String str) {
-        return itemService.search(str);
+    public Collection<ItemDtoOut> search(@RequestHeader(USER_ID_HEADER) long userId,
+                                         @RequestParam("text") String searchText) {
+        return itemService.search(searchText);
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
-public class ItemDaoInMemoryImpl implements ItemDao {
+public class InMemoryItemDao implements ItemDao {
 
     private final Map<Long, Item> items = new TreeMap<>();
 
@@ -30,7 +30,7 @@ public class ItemDaoInMemoryImpl implements ItemDao {
 
     @Override
     public Optional<Item> findByItemId(long itemId) {
-        return Optional.ofNullable(items.getOrDefault(itemId, null));
+        return Optional.ofNullable(items.get(itemId));
     }
 
     @Override
@@ -41,12 +41,17 @@ public class ItemDaoInMemoryImpl implements ItemDao {
     }
 
     @Override
-    public Collection<Item> findByStr(String str) {
+    public Collection<Item> findByStr(String searchText) {
         return items.values().stream()
                 .filter(Item::isAvailable)
-                .filter(item -> item.getName().toLowerCase().contains(str.toLowerCase())
-                        || item.getDescription().toLowerCase().contains(str.toLowerCase()))
+                .filter(item -> item.getName().toLowerCase().contains(searchText.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(searchText.toLowerCase()))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public boolean contains(long itemId) {
+        return items.containsKey(itemId);
     }
 
 }

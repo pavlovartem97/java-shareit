@@ -8,7 +8,8 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.OwnerIsNotValidException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.UserDao;
+import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,19 +18,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private final UserService userService;
+    private final UserDao userDao;
     private final ItemMapper itemMapper;
     private final ItemDao itemDao;
 
     public ItemDtoOut addItem(ItemDtoIn itemDto, long userId) {
-        User user = userService.getUser(userId);
+        User user = userDao.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
         Item item = itemMapper.map(itemDto, user);
         itemDao.save(item);
         return itemMapper.map(item);
     }
 
     public ItemDtoOut updateItem(ItemDtoIn itemDto, long itemId, long userId) {
-        User user = userService.getUser(userId);
+        User user = userDao.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
         Item item = itemDao.findByItemId(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Item is not found"));
         if (!user.getId().equals(item.getOwner().getId())) {
@@ -55,20 +58,19 @@ public class ItemService {
     }
 
     public Collection<ItemDtoOut> getAllItemsByUserId(long userId) {
-        checkUserExist(userId);
+        if (!userDao.contains(userId)) {
+            throw new UserNotFoundException("User not found");
+        }
         Collection<Item> items = itemDao.findByUserId(userId);
         return itemMapper.map(items);
     }
 
-    public Collection<ItemDtoOut> search(String str) {
-        if (str.isBlank()) {
+    public Collection<ItemDtoOut> search(String searchText) {
+        if (searchText.isBlank()) {
             return List.of();
         }
-        Collection<Item> items = itemDao.findByStr(str);
+        Collection<Item> items = itemDao.findByStr(searchText);
         return itemMapper.map(items);
     }
 
-    private void checkUserExist(long userId) {
-        userService.getUser(userId);
-    }
 }

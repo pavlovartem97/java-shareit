@@ -2,7 +2,6 @@ package ru.practicum.shareit.user;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 public interface UserDao {
 
@@ -12,8 +11,10 @@ public interface UserDao {
 
     void deleteByUserId(long userId);
 
-    Set<String> findAllEmail();
+    boolean existByEmail(String email);
 
     Collection<User> findAll();
+
+    boolean contains(long userId);
 
 }
