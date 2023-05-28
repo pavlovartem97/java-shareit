@@ -23,7 +23,7 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    private final static String USER_ID_HEADER = "X-Sharer-User-Id";
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     public ItemDtoOut addItem(@RequestBody @Valid ItemDtoIn dto,
