@@ -11,6 +11,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +61,9 @@ public class ItemService {
     }
 
     public Collection<ItemDtoOut> search(String str) {
+        if (str.isBlank()) {
+            return List.of();
+        }
         Collection<Item> items = itemDao.findByStr(str);
         return itemMapper.map(items);
     }

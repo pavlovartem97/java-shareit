@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,11 +42,10 @@ public class ItemDaoInMemoryImpl implements ItemDao {
 
     @Override
     public Collection<Item> findByStr(String str) {
-        String regex = "*" + str + "*";
         return items.values().stream()
-                .filter(item -> item.isAvailable())
-                .filter(item -> Pattern.matches(regex, item.getName())
-                        || Pattern.matches(regex, item.getDescription()))
+                .filter(Item::isAvailable)
+                .filter(item -> item.getName().toLowerCase().contains(str.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(str.toLowerCase()))
                 .collect(Collectors.toUnmodifiableList());
     }
 

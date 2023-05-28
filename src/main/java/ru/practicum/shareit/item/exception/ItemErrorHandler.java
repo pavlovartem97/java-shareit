@@ -10,7 +10,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class ItemErrorHandler {
 
-    @ExceptionHandler(ItemNotFoundException.class)
+    @ExceptionHandler({ItemNotFoundException.class, OwnerIsNotValidException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleFileNotFoundException(final RuntimeException e) {
         return Map.of("Error", e.getMessage());
