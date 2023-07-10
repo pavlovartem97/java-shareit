@@ -13,7 +13,7 @@ public interface ItemDao {
 
     Collection<Item> findByUserId(long userId);
 
-    Collection<Item> findByStr(String searchText);
+    Collection<Item> findBySearchText(String searchText);
 
     boolean contains(long itemId);
 

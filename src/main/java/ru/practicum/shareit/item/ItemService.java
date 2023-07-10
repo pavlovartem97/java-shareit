@@ -2,14 +2,12 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
-import ru.practicum.shareit.item.exception.ItemNotFoundException;
-import ru.practicum.shareit.item.exception.OwnerIsNotValidException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDao;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +22,7 @@ public class ItemService {
 
     public ItemDtoOut addItem(ItemDtoIn itemDto, long userId) {
         User user = userDao.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+                .orElseThrow(() -> new NotFoundException("User is not found"));
         Item item = itemMapper.map(itemDto, user);
         itemDao.save(item);
         return itemMapper.map(item);
@@ -32,11 +30,11 @@ public class ItemService {
 
     public ItemDtoOut updateItem(ItemDtoIn itemDto, long itemId, long userId) {
         User user = userDao.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+                .orElseThrow(() -> new NotFoundException("User is not found"));
         Item item = itemDao.findByItemId(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Item is not found"));
+                .orElseThrow(() -> new NotFoundException("Item is not found"));
         if (!user.getId().equals(item.getOwner().getId())) {
-            throw new OwnerIsNotValidException("User is not item's owner");
+            throw new NotFoundException("User is not item's owner");
         }
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
@@ -53,13 +51,13 @@ public class ItemService {
 
     public ItemDtoOut getItem(long itemId) {
         Item item = itemDao.findByItemId(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Item is not found"));
+                .orElseThrow(() -> new NotFoundException("Item is not found"));
         return itemMapper.map(item);
     }
 
     public Collection<ItemDtoOut> getAllItemsByUserId(long userId) {
         if (!userDao.contains(userId)) {
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
         Collection<Item> items = itemDao.findByUserId(userId);
         return itemMapper.map(items);
@@ -69,7 +67,7 @@ public class ItemService {
         if (searchText.isBlank()) {
             return List.of();
         }
-        Collection<Item> items = itemDao.findByStr(searchText);
+        Collection<Item> items = itemDao.findBySearchText(searchText);
         return itemMapper.map(items);
     }
 

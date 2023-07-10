@@ -2,11 +2,11 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.AlreadyExistException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDtoOut;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
-import ru.practicum.shareit.user.exception.UserEmailAlreadyExist;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.util.Collection;
 
@@ -26,14 +26,14 @@ public class UserService {
 
     public void deleteUser(long userId) {
         if (!userDao.contains(userId)) {
-            throw new UserNotFoundException("User is not found");
+            throw new NotFoundException("User is not found");
         }
         userDao.deleteByUserId(userId);
     }
 
     public UserDtoOut updateUser(UserUpdateDto dto, long userId) {
         final User user = userDao.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+                .orElseThrow(() -> new NotFoundException("User is not found"));
         if ((dto.getEmail() == null || dto.getEmail().equals(user.getEmail()))
                 && (dto.getName() == null || dto.getName().equals(user.getName()))) {
             return userMapper.map(user);
@@ -51,7 +51,7 @@ public class UserService {
 
     public UserDtoOut getUser(long userId) {
         User user = userDao.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+                .orElseThrow(() -> new NotFoundException("User is not found"));
         return userMapper.map(user);
     }
 
@@ -62,7 +62,7 @@ public class UserService {
 
     private void checkUniqueEmail(String email) {
         if (userDao.existByEmail(email)) {
-            throw new UserEmailAlreadyExist(String.format("User email %s already exist", email));
+            throw new AlreadyExistException(String.format("User email %s already exist", email));
         }
     }
 }

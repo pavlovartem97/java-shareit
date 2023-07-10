@@ -41,7 +41,7 @@ public class InMemoryItemDao implements ItemDao {
     }
 
     @Override
-    public Collection<Item> findByStr(String searchText) {
+    public Collection<Item> findBySearchText(String searchText) {
         return items.values().stream()
                 .filter(Item::isAvailable)
                 .filter(item -> item.getName().toLowerCase().contains(searchText.toLowerCase())
