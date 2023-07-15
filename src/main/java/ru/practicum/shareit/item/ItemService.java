@@ -2,12 +2,12 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserDao;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,24 +16,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
     private final ItemMapper itemMapper;
-    private final ItemDao itemDao;
+    private final ItemRepository itemRepository;
 
+    @Transactional
     public ItemDtoOut addItem(ItemDtoIn itemDto, long userId) {
-        User user = userDao.findByUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
         Item item = itemMapper.map(itemDto, user);
-        itemDao.save(item);
+        itemRepository.save(item);
         return itemMapper.map(item);
     }
 
+    @Transactional
     public ItemDtoOut updateItem(ItemDtoIn itemDto, long itemId, long userId) {
-        User user = userDao.findByUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
-        Item item = itemDao.findByItemId(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item is not found"));
-        if (!user.getId().equals(item.getOwner().getId())) {
+        if (!user.getId().equals(item.getUser().getId())) {
             throw new NotFoundException("User is not item's owner");
         }
         if (itemDto.getAvailable() != null) {
@@ -45,29 +47,31 @@ public class ItemService {
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }
-        itemDao.save(item);
+        itemRepository.save(item);
         return itemMapper.map(item);
     }
 
+    @Transactional(readOnly = true)
     public ItemDtoOut getItem(long itemId) {
-        Item item = itemDao.findByItemId(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item is not found"));
         return itemMapper.map(item);
     }
 
+    @Transactional(readOnly = true)
     public Collection<ItemDtoOut> getAllItemsByUserId(long userId) {
-        if (!userDao.contains(userId)) {
-            throw new NotFoundException("User not found");
-        }
-        Collection<Item> items = itemDao.findByUserId(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
+        Collection<Item> items = itemRepository.findByUser(user);
         return itemMapper.map(items);
     }
 
+    @Transactional(readOnly = true)
     public Collection<ItemDtoOut> search(String searchText) {
         if (searchText.isBlank()) {
             return List.of();
         }
-        Collection<Item> items = itemDao.findBySearchText(searchText);
+        Collection<Item> items = itemRepository.searchByNameAndDescription(searchText);
         return itemMapper.map(items);
     }
 
