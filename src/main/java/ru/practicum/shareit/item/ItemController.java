@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.ItemBookingBriefInfoDtoOut;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 
@@ -39,13 +40,13 @@ public class ItemController {
     }
 
     @GetMapping("{itemId}")
-    public ItemDtoOut getItem(@PathVariable("itemId") long itemId,
-                              @RequestHeader(USER_ID_HEADER) long userId) {
-        return itemService.getItem(itemId);
+    public ItemBookingBriefInfoDtoOut getItem(@PathVariable("itemId") long itemId,
+                                              @RequestHeader(USER_ID_HEADER) long userId) {
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping
-    public Collection<ItemDtoOut> getItems(@RequestHeader(USER_ID_HEADER) long userId) {
+    public Collection<ItemBookingBriefInfoDtoOut> getItems(@RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.getAllItemsByUserId(userId);
     }
 

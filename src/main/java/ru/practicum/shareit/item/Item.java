@@ -37,6 +37,4 @@ public class Item {
     @JoinColumn(name = "user_id")
     private User user;
 
-    //private ItemRequest itemRequest;
-
 }

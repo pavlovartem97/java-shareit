@@ -20,9 +20,9 @@ public class UserService {
 
     @Transactional
     public UserDtoOut addUser(UserCreateDto dto) {
-        checkUniqueEmail(dto.getEmail());
         User user = userMapper.map(dto);
         userRepository.save(user);
+        checkUniqueEmail(user);
         return userMapper.map(user);
     }
 
@@ -42,13 +42,13 @@ public class UserService {
             return userMapper.map(user);
         }
         if (dto.getEmail() != null && !dto.getEmail().equals(user.getEmail())) {
-            checkUniqueEmail(dto.getEmail());
             user.setEmail(dto.getEmail());
         }
         if (dto.getName() != null && !dto.getName().equals(user.getName())) {
             user.setName(dto.getName());
         }
         userRepository.save(user);
+        checkUniqueEmail(user);
         return userMapper.map(user);
     }
 
@@ -65,8 +65,8 @@ public class UserService {
         return userMapper.map(users);
     }
 
-    private void checkUniqueEmail(String email) {
-        if (userRepository.existsUserByEmail(email)) {
+    private void checkUniqueEmail(User user) {
+        if (userRepository.existsUserByEmail(user.getEmail(), user.getId())) {
             throw new AlreadyExistException("Email already exist");
         }
     }

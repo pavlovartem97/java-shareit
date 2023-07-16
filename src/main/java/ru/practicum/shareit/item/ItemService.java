@@ -3,14 +3,20 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.dto.BookingBriefDtoOut;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemBookingBriefInfoDtoOut;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +25,7 @@ public class ItemService {
     private final UserRepository userRepository;
     private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
+    private final BookingRepository bookingRepository;
 
     @Transactional
     public ItemDtoOut addItem(ItemDtoIn itemDto, long userId) {
@@ -52,18 +59,25 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public ItemDtoOut getItem(long itemId) {
+    public ItemBookingBriefInfoDtoOut getItem(long itemId, long userId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item is not found"));
-        return itemMapper.map(item);
+
+        if (item.getUser().getId() != userId) {
+            return itemMapper.map(item, null, null);
+        }
+
+        return addBookingInformation(item);
     }
 
     @Transactional(readOnly = true)
-    public Collection<ItemDtoOut> getAllItemsByUserId(long userId) {
+    public Collection<ItemBookingBriefInfoDtoOut> getAllItemsByUserId(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
         Collection<Item> items = itemRepository.findByUser(user);
-        return itemMapper.map(items);
+        return items.stream()
+                .map(this::addBookingInformation)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional(readOnly = true)
@@ -75,4 +89,19 @@ public class ItemService {
         return itemMapper.map(items);
     }
 
+    ItemBookingBriefInfoDtoOut addBookingInformation(Item item) {
+        LocalDateTime now = LocalDateTime.now();
+        Optional<BookingRepository.BriefInfoView> lastBriefBookingInfo =
+                bookingRepository.findLastBriefBookingInfo(item.getId(), now);
+        Optional<BookingRepository.BriefInfoView> nextBriefBookingInfo =
+                bookingRepository.findNextBriefBookingInfo(item.getId(), now);
+
+        BookingBriefDtoOut last = lastBriefBookingInfo
+                .map(info -> new BookingBriefDtoOut(info.getId(), info.getBookerId()))
+                .orElse(null);
+        BookingBriefDtoOut next = nextBriefBookingInfo
+                .map(info -> new BookingBriefDtoOut(info.getId(), info.getBookerId()))
+                .orElse(null);
+        return itemMapper.map(item, last, next);
+    }
 }

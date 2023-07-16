@@ -11,7 +11,13 @@ import java.util.Map;
 public class ErrorHandler {
     @ExceptionHandler({NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleFileNotFoundException(final RuntimeException e) {
+    public Map<String, String> handleNotFoundException(final RuntimeException e) {
         return Map.of("Error", e.getMessage());
+    }
+
+    @ExceptionHandler({BadRequestException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBadRequestException(final RuntimeException e) {
+        return Map.of("Error message", e.getMessage());
     }
 }
