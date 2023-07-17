@@ -3,6 +3,9 @@ package ru.practicum.shareit.booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.shareit.booking.dto.BookingStatus;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -38,6 +41,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "LIMIT 1", nativeQuery = true)
     Optional<BriefInfoView> findNextBriefBookingInfo(@Param("itemId") long itemId,
                                                      @Param("now") LocalDateTime now);
+
+    boolean existsBookingByBookerAndItemAndStatusAndStartLessThanEqual(User booker,
+                                                                       Item item,
+                                                                       BookingStatus status,
+                                                                       LocalDateTime start);
 
     interface BriefInfoView {
         long getId();

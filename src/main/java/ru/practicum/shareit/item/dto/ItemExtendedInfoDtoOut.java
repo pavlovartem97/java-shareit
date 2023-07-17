@@ -5,8 +5,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import ru.practicum.shareit.booking.dto.BookingBriefDtoOut;
 
+import java.util.List;
+
 @Value
-public class ItemBookingBriefInfoDtoOut {
+public class ItemExtendedInfoDtoOut {
     /**
      * Идентификатор предмета
      */
@@ -42,4 +44,10 @@ public class ItemBookingBriefInfoDtoOut {
      */
     @Nullable
     BookingBriefDtoOut nextBooking;
+
+    /**
+     * Комментарии к посту
+     */
+    @NonNull
+    List<CommentDtoOut> comments;
 }
