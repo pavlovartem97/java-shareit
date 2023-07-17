@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
@@ -24,11 +25,20 @@ import static ru.practicum.shareit.booking.dto.BookingStatus.WAITING;
 @RequiredArgsConstructor
 public class BookingServise {
 
-    private final BookingRepository bookingRepository;
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
-    private final BookingMapper bookingMapper;
-    private final BookingCustomRepository bookingCustomRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BookingMapper bookingMapper;
+
+    @Autowired
+    private BookingCustomRepository bookingCustomRepository;
 
     @Transactional
     public BookingDtoOut addBooking(BookingDtoIn dto, long userId) {
