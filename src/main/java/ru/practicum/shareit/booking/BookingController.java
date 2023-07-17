@@ -23,38 +23,38 @@ public class BookingController {
 
     private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
-    private final BookingServise bookingServise;
+    private final BookingService bookingService;
 
     @PostMapping
     public BookingDtoOut addBooking(@RequestBody @Valid BookingDtoIn dto,
                                     @RequestHeader(USER_ID_HEADER) long userId) {
-        return bookingServise.addBooking(dto, userId);
+        return bookingService.addBooking(dto, userId);
     }
 
     @PatchMapping("{bookingId}")
     public BookingDtoOut approveBooking(@PathVariable("bookingId") long bookingId,
                                         @RequestParam("approved") boolean approved,
                                         @RequestHeader(USER_ID_HEADER) long userId) {
-        return bookingServise.approveBooking(bookingId, approved, userId);
+        return bookingService.approveBooking(bookingId, approved, userId);
     }
 
     @GetMapping("{bookingId}")
     public BookingDtoOut getBooking(@PathVariable("bookingId") long bookingId,
                                     @RequestHeader(USER_ID_HEADER) long userId) {
-        return bookingServise.getBooking(bookingId, userId);
+        return bookingService.getBooking(bookingId, userId);
     }
 
     @GetMapping
     public Collection<BookingDtoOut> getAllBookingsByUser(
             @RequestParam(value = "state", required = false, defaultValue = "ALL") String state,
             @RequestHeader(USER_ID_HEADER) long userId) {
-        return bookingServise.getAllBookingsByUser(state, userId);
+        return bookingService.getAllBookingsByUser(state, userId);
     }
 
     @GetMapping("owner")
     public Collection<BookingDtoOut> getAllBookingsByOwner(
             @RequestParam(value = "state", required = false, defaultValue = "ALL") String state,
             @RequestHeader(USER_ID_HEADER) long userId) {
-        return bookingServise.getAllBookingsByOwner(state, userId);
+        return bookingService.getAllBookingsByOwner(state, userId);
     }
 }

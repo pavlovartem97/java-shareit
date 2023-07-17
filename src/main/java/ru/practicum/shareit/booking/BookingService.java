@@ -23,7 +23,7 @@ import static ru.practicum.shareit.booking.dto.BookingStatus.WAITING;
 
 @Service
 @RequiredArgsConstructor
-public class BookingServise {
+public class BookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
