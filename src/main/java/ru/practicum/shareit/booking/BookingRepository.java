@@ -26,7 +26,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "    b.booker_id AS bookerId " +
             "FROM sh_booking b " +
             "WHERE b.item_id = :itemId " +
-            "    AND b.end_date < :now " +
+            "    AND b.start_date < :now " +
             "    AND b.status = 'APPROVED' " +
             "ORDER BY b.end_date DESC " +
             "LIMIT 1", nativeQuery = true)
