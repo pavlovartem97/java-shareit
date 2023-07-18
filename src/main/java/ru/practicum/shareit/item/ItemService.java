@@ -87,16 +87,10 @@ public class ItemService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
         Collection<Item> items = itemRepository.findByUser(user);
-        List<Comment> comments = commentRepository.findByItemInOrderById(items);
 
-        Map<Long, List<Comment>> commentMap = new HashMap<>();
-        comments.forEach(comment -> {
-            Long itemId = comment.getItem().getId();
-            if (!commentMap.containsKey(itemId)) {
-                commentMap.put(itemId, new ArrayList<>());
-            }
-            commentMap.get(itemId).add(comment);
-        });
+        List<Comment> comments = commentRepository.findByItemInOrderById(items);
+        Map<Long, List<Comment>> commentMap = comments.stream()
+                .collect(Collectors.groupingBy(Comment::getId));
 
         return items.stream()
                 .map(item -> itemMapper.map(item,

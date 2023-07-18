@@ -18,6 +18,4 @@ public class CommentDtoIn {
     public CommentDtoIn(@JsonProperty("text") String text) {
         this.text = text;
     }
-
-    ;
 }
