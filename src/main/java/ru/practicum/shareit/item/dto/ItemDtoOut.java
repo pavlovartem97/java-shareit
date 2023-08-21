@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Value;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 @Value
 public class ItemDtoOut {
@@ -30,4 +31,6 @@ public class ItemDtoOut {
     @NonNull
     Boolean available;
 
+    @Nullable
+    Long requestId;
 }

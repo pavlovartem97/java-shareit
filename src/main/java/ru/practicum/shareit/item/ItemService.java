@@ -13,6 +13,8 @@ import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.dto.ItemExtendedInfoDtoOut;
+import ru.practicum.shareit.request.Request;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -32,12 +34,18 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Transactional
     public ItemDtoOut addItem(ItemDtoIn itemDto, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
-        Item item = itemMapper.map(itemDto, user);
+        Request request = null;
+        if (itemDto.getRequestId() != null) {
+            request = requestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Request is not found"));
+        }
+        Item item = itemMapper.map(itemDto, user, request);
         itemRepository.save(item);
         return itemMapper.map(item);
     }

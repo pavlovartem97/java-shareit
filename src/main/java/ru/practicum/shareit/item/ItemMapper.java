@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.dto.ItemExtendedInfoDtoOut;
+import ru.practicum.shareit.request.Request;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -19,9 +20,11 @@ import java.util.List;
 public abstract class ItemMapper {
 
     @Mapping(target = "name", source = "dto.name")
+    @Mapping(target = "description", source = "dto.description")
     @Mapping(target = "id", ignore = true)
-    public abstract Item map(ItemDtoIn dto, User user);
+    public abstract Item map(ItemDtoIn dto, User user, Request request);
 
+    @Mapping(target = "requestId", source = "item.request.id")
     public abstract ItemDtoOut map(Item item);
 
     public abstract Collection<ItemDtoOut> map(Collection<Item> items);
