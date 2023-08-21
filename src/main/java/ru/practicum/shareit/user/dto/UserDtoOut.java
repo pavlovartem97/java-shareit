@@ -10,15 +10,21 @@ import org.springframework.lang.NonNull;
 @AllArgsConstructor
 public class UserDtoOut {
 
-    /** Уникальный идентификатор пользователя */
+    /**
+     * Уникальный идентификатор пользователя
+     */
     @NonNull
     private Long id;
 
-    /** Имя пользователя */
+    /**
+     * Имя пользователя
+     */
     @NonNull
     private String name;
 
-    /** Адрес электронной почты */
+    /**
+     * Адрес электронной почты
+     */
     @NonNull
     private String email;
 

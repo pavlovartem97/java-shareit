@@ -10,17 +10,25 @@ import java.time.LocalDateTime;
 @Setter
 public class ItemRequest {
 
-    /** Уникальный идентификатор запроса */
+    /**
+     * Уникальный идентификатор запроса
+     */
     private Long id;
 
 
-    /** Описание запроса */
+    /**
+     * Описание запроса
+     */
     private String string;
 
-    /** Пользователь, создавший запрос */
+    /**
+     * Пользователь, создавший запрос
+     */
     private User requestor;
 
-    /** Дата и время создания запроса */
+    /**
+     * Дата и время создания запроса
+     */
     private LocalDateTime created;
 
 }

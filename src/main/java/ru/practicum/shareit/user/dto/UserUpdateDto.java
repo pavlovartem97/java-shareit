@@ -7,11 +7,15 @@ import javax.validation.constraints.Email;
 
 @Value
 public class UserUpdateDto {
-    /** Имя пользователя */
+    /**
+     * Имя пользователя
+     */
     @Nullable
     String name;
 
-    /** Адрес электронной почты */
+    /**
+     * Адрес электронной почты
+     */
     @Email(message = "User email is not valid")
     @Nullable
     String email;

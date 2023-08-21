@@ -7,15 +7,21 @@ import javax.validation.constraints.NotNull;
 
 @Value
 public class ItemDtoIn {
-    /** Краткое название */
+    /**
+     * Краткое название
+     */
     @NotEmpty
     String name;
 
-    /** Развернутое описание */
+    /**
+     * Развернутое описание
+     */
     @NotEmpty
     String description;
 
-    /** Статус о том, доступна или нет вещь для аренды */
+    /**
+     * Статус о том, доступна или нет вещь для аренды
+     */
     @NotNull
     Boolean available;
 }
