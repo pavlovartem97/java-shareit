@@ -35,6 +35,18 @@ public class RequestControllerTest extends BaseTest {
 
     @Test
     @SneakyThrows
+    public void addRequest_whenUserDoesNotFound_Failed() {
+        RequestDtoIn requestDtoIn = new RequestDtoIn("description");
+
+        mockMvc.perform(post("/requests")
+                        .header(USER_ID_HEADER, 999)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJsonBytes(requestDtoIn)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
     public void getRequests_Success() {
         User user = createUser("name", "email@gmail.com");
         Request request = createRequest(user);
@@ -43,6 +55,14 @@ public class RequestControllerTest extends BaseTest {
                         .header(USER_ID_HEADER, user.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].description", is((request.getDescription()))));
+    }
+
+    @Test
+    @SneakyThrows
+    public void getRequests_whenUserDoesNotFond_Failed() {
+        mockMvc.perform(get("/requests")
+                        .header(USER_ID_HEADER, 999))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -60,6 +80,14 @@ public class RequestControllerTest extends BaseTest {
 
     @Test
     @SneakyThrows
+    public void getRequestsAll_whenUserIsNotFound_Failed() {
+        mockMvc.perform(get("/requests/all")
+                        .header(USER_ID_HEADER, 999))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
     public void getRequestById_Success() {
         User user = createUser("name", "email@gmail.com");
         User otherUser = createUser("name2", "email2@gmail.com");
@@ -69,6 +97,30 @@ public class RequestControllerTest extends BaseTest {
                         .header(USER_ID_HEADER, otherUser.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description", is((request.getDescription()))));
+    }
+
+    @Test
+    @SneakyThrows
+    public void getRequestById_whenUserNotFound_Failed() {
+        User user = createUser("name", "email@gmail.com");
+        User otherUser = createUser("name2", "email2@gmail.com");
+        Request request = createRequest(user);
+
+        mockMvc.perform(get("/requests/{requestId}", request.getId())
+                        .header(USER_ID_HEADER, 999))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
+    public void getRequestById_whenRequestNotFound_Failed() {
+        User user = createUser("name", "email@gmail.com");
+        User otherUser = createUser("name2", "email2@gmail.com");
+        Request request = createRequest(user);
+
+        mockMvc.perform(get("/requests/{requestId}", 999)
+                        .header(USER_ID_HEADER, otherUser.getId()))
+                .andExpect(status().isNotFound());
     }
 
     @Test
