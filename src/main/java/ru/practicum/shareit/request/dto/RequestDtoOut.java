@@ -5,15 +5,14 @@ import ru.practicum.shareit.item.dto.ItemDtoOut;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 
 @Value
 public class RequestDtoOut {
-	Long id;
+    Long id;
 
-	String description;
+    String description;
 
-	LocalDateTime created;
+    LocalDateTime created;
 
-	Collection<ItemDtoOut> items;
+    Collection<ItemDtoOut> items;
 }

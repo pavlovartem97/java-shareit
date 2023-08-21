@@ -8,11 +8,11 @@ import javax.validation.constraints.NotEmpty;
 
 @Value
 public class RequestDtoIn {
-	@NotEmpty
-	String description;
+    @NotEmpty
+    String description;
 
-	@JsonCreator
-	public RequestDtoIn(@JsonProperty("description") String description) {
-		this.description = description;
-	}
+    @JsonCreator
+    public RequestDtoIn(@JsonProperty("description") String description) {
+        this.description = description;
+    }
 }

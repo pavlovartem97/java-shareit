@@ -23,7 +23,7 @@ public class BookingCustomRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Collection<Booking> findAllBookingsByBooker(User user, BookingSearchState state, boolean isBooker) {
+    public Collection<Booking> findAllBookingsByBooker(User user, BookingSearchState state, boolean isBooker, int from, int size) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Booking> query = builder.createQuery(Booking.class);
         Root<Booking> root = query.from(Booking.class);
@@ -71,6 +71,8 @@ public class BookingCustomRepository {
         query.orderBy(builder.desc(start));
 
         return entityManager.createQuery(query)
+                .setFirstResult(from)
+                .setMaxResults(size)
                 .getResultList();
     }
 }

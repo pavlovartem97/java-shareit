@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.util.Utils.checkFromAndSize;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
@@ -89,10 +91,12 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<ItemExtendedInfoDtoOut> getAllItemsByUserId(long userId) {
+    public Collection<ItemExtendedInfoDtoOut> getAllItemsByUserId(long userId, int from, int size) {
+        checkFromAndSize(from, size);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
-        Collection<Item> items = itemRepository.findByUser(user);
+        Collection<Item> items = itemRepository.findByUserId(user.getId(), from, size);
 
         List<Comment> comments = commentRepository.findByItemInOrderById(items);
         Map<Long, List<Comment>> commentMap = comments.stream()
@@ -107,11 +111,13 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<ItemDtoOut> search(String searchText) {
+    public Collection<ItemDtoOut> search(String searchText, int from, int size) {
+        checkFromAndSize(from, size);
+
         if (searchText.isBlank()) {
             return List.of();
         }
-        Collection<Item> items = itemRepository.searchByNameAndDescription(searchText);
+        Collection<Item> items = itemRepository.searchByNameAndDescription(searchText, from, size);
         return itemMapper.map(items);
     }
 

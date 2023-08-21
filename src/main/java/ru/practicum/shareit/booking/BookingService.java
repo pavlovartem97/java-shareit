@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import static ru.practicum.shareit.booking.dto.BookingStatus.APPROVED;
 import static ru.practicum.shareit.booking.dto.BookingStatus.REJECTED;
 import static ru.practicum.shareit.booking.dto.BookingStatus.WAITING;
+import static ru.practicum.shareit.util.Utils.checkFromAndSize;
 
 @Service
 @RequiredArgsConstructor
@@ -85,24 +86,26 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<BookingDtoOut> getAllBookingsByUser(String stringState, long bookerId) {
+    public Collection<BookingDtoOut> getAllBookingsByUser(String stringState, long bookerId, int from, int size) {
+        checkFromAndSize(from, size);
         User booker = userRepository.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
         Collection<Booking> bookings = bookingCustomRepository
-                .findAllBookingsByBooker(booker, getState(stringState), true);
+                .findAllBookingsByBooker(booker, getState(stringState), true, from, size);
 
         return bookings.stream()
                 .map(bookingMapper::map)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public Collection<BookingDtoOut> getAllBookingsByOwner(String stringState, long ownerId) {
+    public Collection<BookingDtoOut> getAllBookingsByOwner(String stringState, long ownerId, int from, int size) {
+        checkFromAndSize(from, size);
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
         Collection<Booking> bookings = bookingCustomRepository.findAllBookingsByBooker(owner,
-                getState(stringState), false);
+                getState(stringState), false, from, size);
 
         return bookings.stream()
                 .map(bookingMapper::map)
