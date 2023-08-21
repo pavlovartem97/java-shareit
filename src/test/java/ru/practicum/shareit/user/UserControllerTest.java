@@ -40,7 +40,7 @@ public class UserControllerTest extends BaseTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJsonBytes(userCreateDto)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -76,6 +76,49 @@ public class UserControllerTest extends BaseTest {
         user = userRepository.getById(user.getId());
         Assertions.assertEquals(userUpdateDto.getEmail(), user.getEmail());
         Assertions.assertEquals(userUpdateDto.getName(), user.getName());
+    }
+
+    @Test
+    public void updateUser_sameFields_Success() throws Exception {
+        User user = createUser("name", "email@gmail.com");
+        UserUpdateDto userUpdateDto = new UserUpdateDto(user.getName(), user.getEmail());
+        mockMvc.perform(patch("/users/{userId}", user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJsonBytes(userUpdateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(userUpdateDto.getName())))
+                .andExpect(jsonPath("$.email", is(userUpdateDto.getEmail())));
+
+        user = userRepository.getById(user.getId());
+        Assertions.assertEquals(userUpdateDto.getEmail(), user.getEmail());
+        Assertions.assertEquals(userUpdateDto.getName(), user.getName());
+    }
+
+    @Test
+    public void updateUser_nullValues_Success() throws Exception {
+        User user = createUser("name", "email@gmail.com");
+        UserUpdateDto userUpdateDto = new UserUpdateDto(null, null);
+        mockMvc.perform(patch("/users/{userId}", user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJsonBytes(userUpdateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.email", is(user.getEmail())));
+    }
+
+    @Test
+    public void updateUser_updateOnlyName_Success() throws Exception {
+        User user = createUser("name", "email@gmail.com");
+        UserUpdateDto userUpdateDto = new UserUpdateDto("name", "newEmail@gmail.com");
+        mockMvc.perform(patch("/users/{userId}", user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJsonBytes(userUpdateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.email", is(user.getEmail())));
     }
 
     @Test

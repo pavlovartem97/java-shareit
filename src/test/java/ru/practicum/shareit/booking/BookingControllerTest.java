@@ -377,4 +377,21 @@ public class BookingControllerTest extends BaseTest {
                 .andExpect(jsonPath("$[0].booker.email", is(booker.getEmail())))
                 .andExpect(jsonPath("$[0].status", is(BookingStatus.WAITING.name())));
     }
+
+    @Test
+    @SneakyThrows
+    public void getBookingByUser_whenBookerDoesNotExists_Failed() {
+        mockMvc.perform(get("/bookings/")
+                        .header(USER_ID_HEADER, 999))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
+    public void getBookingByOwner_ownerDoesNotExists_Failed() {
+        mockMvc.perform(get("/bookings/owner")
+                        .header(USER_ID_HEADER, 999))
+                .andExpect(status().isNotFound());
+    }
+
 }

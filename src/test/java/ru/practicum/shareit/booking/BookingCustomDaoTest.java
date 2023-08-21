@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,13 @@ public class BookingCustomDaoTest extends BaseTest {
         assertBookings(waitedBooking, BookingSearchState.WAITING, owner, false);
         assertBookings(rejectedBooking, BookingSearchState.REJECTED, booker, true);
         assertBookings(waitedBooking, BookingSearchState.WAITING, booker, true);
+
+        Collection<Booking> allBookingsByBooker =
+                bookingCustomRepository.findAllBookingsByBooker(booker, BookingSearchState.ALL, true, 0, 20);
+        Collection<Booking> allBookingsByOwner =
+                bookingCustomRepository.findAllBookingsByBooker(owner, BookingSearchState.ALL, false, 0, 20);
+        Assertions.assertEquals(2, allBookingsByBooker.size());
+        Assertions.assertEquals(2, allBookingsByOwner.size());
     }
 
     @Test
@@ -53,6 +61,13 @@ public class BookingCustomDaoTest extends BaseTest {
         assertBookings(future, BookingSearchState.FUTURE, booker, true);
         assertBookings(past, BookingSearchState.PAST, booker, true);
         assertBookings(current, BookingSearchState.CURRENT, booker, true);
+
+        Collection<Booking> allBookingsByBooker =
+                bookingCustomRepository.findAllBookingsByBooker(booker, BookingSearchState.ALL, true, 0, 20);
+        Collection<Booking> allBookingsByOwner =
+                bookingCustomRepository.findAllBookingsByBooker(owner, BookingSearchState.ALL, false, 0, 20);
+        Assertions.assertEquals(3, allBookingsByBooker.size());
+        Assertions.assertEquals(3, allBookingsByOwner.size());
     }
 
     private void assertBookings(Booking booking, BookingSearchState bookingSearchState, User user, Boolean isBooker) {

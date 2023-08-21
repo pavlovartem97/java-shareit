@@ -14,6 +14,7 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -182,6 +183,19 @@ public class ItemControllerTest extends BaseTest {
                 .andExpect(jsonPath("$[0].name", is(item.getName())))
                 .andExpect(jsonPath("$[0].description", is(item.getDescription())))
                 .andExpect(jsonPath("$[0].available", is(item.getAvailable())));
+    }
+
+    @Test
+    @SneakyThrows
+    public void search_searchTextIsBlank_Success() {
+        User user = createUser("name", "email@gmail.com");
+        Item item = createItem(user, "", true);
+
+        mockMvc.perform(get("/items/search")
+                        .header(USER_ID_HEADER, user.getId())
+                        .param("text", "name"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
