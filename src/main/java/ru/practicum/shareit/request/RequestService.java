@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.util.Utils.checkFromAndSize;
-
 @Service
 @RequiredArgsConstructor
 public class RequestService {
@@ -50,7 +48,6 @@ public class RequestService {
     }
 
     public List<RequestDtoOut> getRequestsAll(long userId, int from, int size) {
-        checkFromAndSize(from, size);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 

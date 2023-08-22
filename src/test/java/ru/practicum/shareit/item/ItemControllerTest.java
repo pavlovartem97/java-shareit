@@ -207,15 +207,15 @@ public class ItemControllerTest extends BaseTest {
         mockMvc.perform(get("/items/search")
                         .header(USER_ID_HEADER, user.getId())
                         .param("text", "name")
-                        .param("size", "0")
-                        .param("from", "0"))
+                        .param("size", "10")
+                        .param("from", "-1"))
                 .andExpect(status().isBadRequest());
 
         mockMvc.perform(get("/items/search")
                         .header(USER_ID_HEADER, user.getId())
                         .param("text", "name")
-                        .param("size", "10")
-                        .param("from", "-1"))
+                        .param("size", "0")
+                        .param("from", "0"))
                 .andExpect(status().isBadRequest());
     }
 

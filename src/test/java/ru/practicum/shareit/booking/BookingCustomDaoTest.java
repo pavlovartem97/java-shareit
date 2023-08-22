@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class BookingCustomDaoTest extends BaseTest {
     @Autowired
-    BookingCustomRepository bookingCustomRepository;
+    private BookingCustomRepository bookingCustomRepository;
 
     @Test
     public void findAllBookingsByBooker_RejectedAndWaiting_Success() {
