@@ -13,6 +13,8 @@ import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.dto.ItemExtendedInfoDtoOut;
+import ru.practicum.shareit.request.Request;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -32,12 +34,18 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Transactional
     public ItemDtoOut addItem(ItemDtoIn itemDto, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
-        Item item = itemMapper.map(itemDto, user);
+        Request request = null;
+        if (itemDto.getRequestId() != null) {
+            request = requestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Request is not found"));
+        }
+        Item item = itemMapper.map(itemDto, user, request);
         itemRepository.save(item);
         return itemMapper.map(item);
     }
@@ -81,10 +89,10 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<ItemExtendedInfoDtoOut> getAllItemsByUserId(long userId) {
+    public Collection<ItemExtendedInfoDtoOut> getAllItemsByUserId(long userId, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
-        Collection<Item> items = itemRepository.findByUser(user);
+        Collection<Item> items = itemRepository.findByUserId(user.getId(), from, size);
 
         List<Comment> comments = commentRepository.findByItemInOrderById(items);
         Map<Long, List<Comment>> commentMap = comments.stream()
@@ -99,11 +107,11 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<ItemDtoOut> search(String searchText) {
+    public Collection<ItemDtoOut> search(String searchText, int from, int size) {
         if (searchText.isBlank()) {
             return List.of();
         }
-        Collection<Item> items = itemRepository.searchByNameAndDescription(searchText);
+        Collection<Item> items = itemRepository.searchByNameAndDescription(searchText, from, size);
         return itemMapper.map(items);
     }
 

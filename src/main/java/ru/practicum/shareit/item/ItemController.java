@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +18,14 @@ import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.dto.ItemExtendedInfoDtoOut;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Validated
 public class ItemController {
 
     private final ItemService itemService;
@@ -48,19 +52,23 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemExtendedInfoDtoOut> getItems(@RequestHeader(USER_ID_HEADER) long userId) {
-        return itemService.getAllItemsByUserId(userId);
+    public Collection<ItemExtendedInfoDtoOut> getItems(@RequestHeader(USER_ID_HEADER) long userId,
+                                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                       @RequestParam(defaultValue = "20") @Positive int size) {
+        return itemService.getAllItemsByUserId(userId, from, size);
     }
 
     @GetMapping("search")
     public Collection<ItemDtoOut> search(@RequestHeader(USER_ID_HEADER) long userId,
-                                         @RequestParam("text") String searchText) {
-        return itemService.search(searchText);
+                                         @RequestParam("text") String searchText,
+                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                         @RequestParam(defaultValue = "20") @Positive int size) {
+        return itemService.search(searchText, from, size);
     }
 
     @PostMapping("{itemId}/comment")
     public CommentDtoOut addComment(@RequestBody @Valid CommentDtoIn dto,
-                                    @RequestHeader(USER_ID_HEADER) long userId,
+                                    @RequestHeader(USER_ID_HEADER)  long userId,
                                     @PathVariable("itemId") long itemId) {
         return itemService.addComment(dto, userId, itemId);
     }

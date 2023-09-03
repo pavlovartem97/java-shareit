@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.AlreadyExistException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDtoOut;
@@ -22,7 +21,6 @@ public class UserService {
     public UserDtoOut addUser(UserCreateDto dto) {
         User user = userMapper.map(dto);
         userRepository.save(user);
-        checkUniqueEmail(user);
         return userMapper.map(user);
     }
 
@@ -48,7 +46,6 @@ public class UserService {
             user.setName(dto.getName());
         }
         userRepository.save(user);
-        checkUniqueEmail(user);
         return userMapper.map(user);
     }
 
@@ -63,11 +60,5 @@ public class UserService {
     public Collection<UserDtoOut> getAllUsers() {
         Collection<User> users = userRepository.findAll();
         return userMapper.map(users);
-    }
-
-    private void checkUniqueEmail(User user) {
-        if (userRepository.existsUserByEmail(user.getEmail(), user.getId())) {
-            throw new AlreadyExistException("Email already exist");
-        }
     }
 }

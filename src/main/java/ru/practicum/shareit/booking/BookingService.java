@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.dto.BookingSearchState;
+import ru.practicum.shareit.booking.dto.BookingStatus;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Item;
@@ -15,10 +16,6 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import static ru.practicum.shareit.booking.dto.BookingStatus.APPROVED;
-import static ru.practicum.shareit.booking.dto.BookingStatus.REJECTED;
-import static ru.practicum.shareit.booking.dto.BookingStatus.WAITING;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +43,7 @@ public class BookingService {
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
-        Booking booking = bookingMapper.map(dto, item, booker, WAITING);
+        Booking booking = bookingMapper.map(dto, item, booker, BookingStatus.WAITING);
 
         bookingRepository.save(booking);
 
@@ -62,11 +59,11 @@ public class BookingService {
         if (owner.getId() != userId) {
             throw new NotFoundException("User is not item's owner");
         }
-        if (booking.getStatus() != WAITING) {
+        if (booking.getStatus() != BookingStatus.WAITING) {
             throw new BadRequestException("Booking status already changed");
         }
 
-        booking.setStatus(approved ? APPROVED : REJECTED);
+        booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
 
         return bookingMapper.map(booking);
     }
@@ -85,24 +82,24 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<BookingDtoOut> getAllBookingsByUser(String stringState, long bookerId) {
+    public Collection<BookingDtoOut> getAllBookingsByUser(String stringState, long bookerId, int from, int size) {
         User booker = userRepository.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
         Collection<Booking> bookings = bookingCustomRepository
-                .findAllBookingsByBooker(booker, getState(stringState), true);
+                .findAllBookingsByBooker(booker, getState(stringState), true, from, size);
 
         return bookings.stream()
                 .map(bookingMapper::map)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public Collection<BookingDtoOut> getAllBookingsByOwner(String stringState, long ownerId) {
+    public Collection<BookingDtoOut> getAllBookingsByOwner(String stringState, long ownerId, int from, int size) {
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
         Collection<Booking> bookings = bookingCustomRepository.findAllBookingsByBooker(owner,
-                getState(stringState), false);
+                getState(stringState), false, from, size);
 
         return bookings.stream()
                 .map(bookingMapper::map)

@@ -1,8 +1,7 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.request.Request;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.Column;
@@ -14,31 +13,25 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
-@Table(name = "sh_item")
-public class Item {
+@Entity
+@Table(name = "sh_request")
+public class Request {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String name;
-
-    @Column
+    @Column(nullable = false)
     private String description;
 
-    @Column
-    private Boolean available;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "requestor_id", nullable = false)
+    private User requestor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id")
-    private Request request;
+    @Column(nullable = false)
+    private LocalDateTime created = LocalDateTime.now();
 }
