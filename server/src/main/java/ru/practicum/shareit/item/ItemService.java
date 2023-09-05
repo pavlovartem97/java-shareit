@@ -108,9 +108,6 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public Collection<ItemDtoOut> search(String searchText, int from, int size) {
-        if (searchText.isBlank()) {
-            return List.of();
-        }
         Collection<Item> items = itemRepository.searchByNameAndDescription(searchText, from, size);
         return itemMapper.map(items);
     }

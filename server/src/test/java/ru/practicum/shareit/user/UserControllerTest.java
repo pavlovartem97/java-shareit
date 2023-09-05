@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import ru.practicum.shareit.BaseTest;
-import ru.practicum.shareit.user.dto.UserCreateDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.dto.UserDtoIn;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -22,7 +21,7 @@ public class UserControllerTest extends BaseTest {
     @Test
     @SneakyThrows
     public void addUser_Success() {
-        UserCreateDto userCreateDto = new UserCreateDto("name", "email@gmail.com");
+        UserDtoIn userCreateDto = new UserDtoIn("name", "email@gmail.com");
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJsonBytes(userCreateDto)))
@@ -36,7 +35,7 @@ public class UserControllerTest extends BaseTest {
         String existEmail = "email@gmail.com";
         createUser("name", existEmail);
 
-        UserCreateDto userCreateDto = new UserCreateDto("name", existEmail);
+        UserDtoIn userCreateDto = new UserDtoIn("name", existEmail);
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJsonBytes(userCreateDto)))
@@ -44,27 +43,9 @@ public class UserControllerTest extends BaseTest {
     }
 
     @Test
-    public void addUser_invalidEmail_Failed() throws Exception {
-        UserCreateDto userCreateDto = new UserCreateDto("name", "thiIsNoEmail");
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJsonBytes(userCreateDto)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void addUser_invalidName_Failed() throws Exception {
-        UserCreateDto userCreateDto = new UserCreateDto(null, "email@gmail.com");
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJsonBytes(userCreateDto)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void updateUser_Success() throws Exception {
         User user = createUser("name", "email@gmail.com");
-        UserUpdateDto userUpdateDto = new UserUpdateDto("newName", "newEmail@gmail.com");
+        UserDtoIn userUpdateDto = new UserDtoIn("newName", "newEmail@gmail.com");
         mockMvc.perform(patch("/users/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJsonBytes(userUpdateDto)))
@@ -81,7 +62,7 @@ public class UserControllerTest extends BaseTest {
     @Test
     public void updateUser_sameFields_Success() throws Exception {
         User user = createUser("name", "email@gmail.com");
-        UserUpdateDto userUpdateDto = new UserUpdateDto(user.getName(), user.getEmail());
+        UserDtoIn userUpdateDto = new UserDtoIn(user.getName(), user.getEmail());
         mockMvc.perform(patch("/users/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJsonBytes(userUpdateDto)))
@@ -98,7 +79,7 @@ public class UserControllerTest extends BaseTest {
     @Test
     public void updateUser_nullValues_Success() throws Exception {
         User user = createUser("name", "email@gmail.com");
-        UserUpdateDto userUpdateDto = new UserUpdateDto(null, null);
+        UserDtoIn userUpdateDto = new UserDtoIn(null, null);
         mockMvc.perform(patch("/users/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJsonBytes(userUpdateDto)))
@@ -111,7 +92,7 @@ public class UserControllerTest extends BaseTest {
     @Test
     public void updateUser_updateOnlyName_Success() throws Exception {
         User user = createUser("name", "email@gmail.com");
-        UserUpdateDto userUpdateDto = new UserUpdateDto("name", "newEmail@gmail.com");
+        UserDtoIn userUpdateDto = new UserDtoIn("name", "newEmail@gmail.com");
         mockMvc.perform(patch("/users/{userId}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJsonBytes(userUpdateDto)))

@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Value
 public class RequestDtoIn {
     @NotEmpty
+    @Size(max = 2000)
     String description;
 
     @JsonCreator

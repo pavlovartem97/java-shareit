@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,9 @@ import ru.practicum.shareit.item.dto.ItemDtoIn;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
+
+import static ru.practicum.shareit.utils.Constraints.USER_ID_HEADER;
 
 @Controller
 @RequestMapping(path = "/items")
@@ -28,8 +32,6 @@ import javax.validation.constraints.PositiveOrZero;
 public class ItemController {
 
     private final ItemClient itemClient;
-
-    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     public ResponseEntity<Object> addItem(@RequestBody @Valid ItemDtoIn dto,
@@ -62,6 +64,9 @@ public class ItemController {
                                          @RequestParam("text") String searchText,
                                          @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                          @RequestParam(defaultValue = "20") @Positive int size) {
+        if (searchText.isBlank()) {
+            return new ResponseEntity<>(List.of(), HttpStatus.OK);
+        }
         return itemClient.search(searchText, userId, from, size);
     }
 

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,15 +16,11 @@ import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.dto.ItemExtendedInfoDtoOut;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-@Validated
 public class ItemController {
 
     private final ItemService itemService;
@@ -33,7 +28,7 @@ public class ItemController {
     private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemDtoOut addItem(@RequestBody @Valid ItemDtoIn dto,
+    public ItemDtoOut addItem(@RequestBody ItemDtoIn dto,
                               @RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.addItem(dto, userId);
     }
@@ -53,22 +48,22 @@ public class ItemController {
 
     @GetMapping
     public Collection<ItemExtendedInfoDtoOut> getItems(@RequestHeader(USER_ID_HEADER) long userId,
-                                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                       @RequestParam(defaultValue = "20") @Positive int size) {
+                                                       @RequestParam(defaultValue = "0") int from,
+                                                       @RequestParam(defaultValue = "20") int size) {
         return itemService.getAllItemsByUserId(userId, from, size);
     }
 
     @GetMapping("search")
     public Collection<ItemDtoOut> search(@RequestHeader(USER_ID_HEADER) long userId,
                                          @RequestParam("text") String searchText,
-                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                         @RequestParam(defaultValue = "20") @Positive int size) {
+                                         @RequestParam(defaultValue = "0") int from,
+                                         @RequestParam(defaultValue = "20") int size) {
         return itemService.search(searchText, from, size);
     }
 
     @PostMapping("{itemId}/comment")
-    public CommentDtoOut addComment(@RequestBody @Valid CommentDtoIn dto,
-                                    @RequestHeader(USER_ID_HEADER)  long userId,
+    public CommentDtoOut addComment(@RequestBody CommentDtoIn dto,
+                                    @RequestHeader(USER_ID_HEADER) long userId,
                                     @PathVariable("itemId") long itemId) {
         return itemService.addComment(dto, userId, itemId);
     }

@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserDtoIn;
 import ru.practicum.shareit.user.dto.UserDtoOut;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.util.Collection;
 
@@ -18,7 +17,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Transactional
-    public UserDtoOut addUser(UserCreateDto dto) {
+    public UserDtoOut addUser(UserDtoIn dto) {
         User user = userMapper.map(dto);
         userRepository.save(user);
         return userMapper.map(user);
@@ -32,7 +31,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDtoOut updateUser(UserUpdateDto dto, long userId) {
+    public UserDtoOut updateUser(UserDtoIn dto, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
         if ((dto.getEmail() == null || dto.getEmail().equals(user.getEmail()))

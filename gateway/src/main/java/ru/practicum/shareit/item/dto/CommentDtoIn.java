@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Value
 public class CommentDtoIn {
@@ -12,6 +13,7 @@ public class CommentDtoIn {
      * Текст комментария
      */
     @NotEmpty
+    @Size(max = 2000)
     String text;
 
     @JsonCreator

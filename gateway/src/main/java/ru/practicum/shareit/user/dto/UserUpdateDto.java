@@ -4,6 +4,7 @@ import lombok.Value;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 
 @Value
 public class UserUpdateDto {
@@ -11,6 +12,7 @@ public class UserUpdateDto {
      * Имя пользователя
      */
     @Nullable
+    @Size(max = 255)
     String name;
 
     /**
@@ -18,5 +20,6 @@ public class UserUpdateDto {
      */
     @Email(message = "User email is not valid")
     @Nullable
+    @Size(max = 255)
     String email;
 }

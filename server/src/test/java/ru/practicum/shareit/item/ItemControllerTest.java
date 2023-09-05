@@ -200,27 +200,6 @@ public class ItemControllerTest extends BaseTest {
 
     @Test
     @SneakyThrows
-    public void search_whenPaginationInvalid_Success() {
-        User user = createUser("name", "email@gmail.com");
-        Item item = createItem(user, "name", true);
-
-        mockMvc.perform(get("/items/search")
-                        .header(USER_ID_HEADER, user.getId())
-                        .param("text", "name")
-                        .param("size", "10")
-                        .param("from", "-1"))
-                .andExpect(status().isBadRequest());
-
-        mockMvc.perform(get("/items/search")
-                        .header(USER_ID_HEADER, user.getId())
-                        .param("text", "name")
-                        .param("size", "0")
-                        .param("from", "0"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @SneakyThrows
     public void addComment_success() {
         User owner = createUser("name", "email@gmail.com");
         User booker = createUser("booker", "booker@gmail.com");

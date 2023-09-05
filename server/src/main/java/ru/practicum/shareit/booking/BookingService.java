@@ -38,8 +38,6 @@ public class BookingService {
             throw new NotFoundException("Owner can't book his item");
         }
 
-        validateDates(dto);
-
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
@@ -104,12 +102,6 @@ public class BookingService {
         return bookings.stream()
                 .map(bookingMapper::map)
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    private void validateDates(BookingDtoIn dto) {
-        if (dto.getEnd().equals(dto.getStart()) || dto.getEnd().isBefore(dto.getStart())) {
-            throw new BadRequestException("End date must be after start date");
-        }
     }
 
     private BookingSearchState getState(String string) {

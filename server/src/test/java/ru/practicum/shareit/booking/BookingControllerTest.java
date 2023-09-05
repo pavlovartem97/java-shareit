@@ -83,39 +83,6 @@ public class BookingControllerTest extends BaseTest {
 
     @Test
     @SneakyThrows
-    public void addBooking_WhenDatesWrong_Failed() {
-        User owner = createUser("name", "email@gmail.com");
-        User booker = createUser("booker", "booker@gmail.com");
-        Item item = createItem(owner, "name", true);
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-        BookingDtoIn bookingDtoIn = new BookingDtoIn(localDateTime.plusDays(2), localDateTime.plusDays(1), item.getId());
-
-        mockMvc.perform(post("/bookings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(USER_ID_HEADER, booker.getId())
-                        .content(toJsonBytes(bookingDtoIn)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @SneakyThrows
-    public void addBooking_WhenUserNotExists_Failed() {
-        User owner = createUser("name", "email@gmail.com");
-        Item item = createItem(owner, "name", true);
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-        BookingDtoIn bookingDtoIn = new BookingDtoIn(localDateTime.plusDays(2), localDateTime.plusDays(1), item.getId());
-
-        mockMvc.perform(post("/bookings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(USER_ID_HEADER, 999)
-                        .content(toJsonBytes(bookingDtoIn)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @SneakyThrows
     public void addBooking_WhenItemNotExists_Failed() {
         User booker = createUser("booker", "booker@gmail.com");
 

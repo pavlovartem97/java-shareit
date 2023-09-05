@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Value
 public class ItemDtoIn {
@@ -12,12 +13,14 @@ public class ItemDtoIn {
      * Краткое название
      */
     @NotEmpty
+    @Size(max = 255)
     String name;
 
     /**
      * Развернутое описание
      */
     @NotEmpty
+    @Size(max = 5000)
     String description;
 
     /**
