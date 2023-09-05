@@ -18,7 +18,6 @@ import ru.practicum.shareit.booking.dto.BookingState;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
 
 import static ru.practicum.shareit.utils.Constraints.USER_ID_HEADER;
 
@@ -31,7 +30,7 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getBookings(@RequestHeader(USER_ID_HEADER) long userId,
-                                              @RequestParam(name = "state", defaultValue = "ALL") @Size(max = 15) String stateParam,
+                                              @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                               @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                               @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
@@ -60,7 +59,7 @@ public class BookingController {
 
     @GetMapping("owner")
     public ResponseEntity<Object> getAllBookingsByOwner(
-            @RequestParam(value = "state", defaultValue = "ALL") @Size(max = 15) String stateParam,
+            @RequestParam(value = "state", defaultValue = "ALL") String stateParam,
             @RequestHeader(USER_ID_HEADER) long userId,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(defaultValue = "20") @Positive int size) {
