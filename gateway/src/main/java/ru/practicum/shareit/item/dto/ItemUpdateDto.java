@@ -7,9 +7,7 @@ import javax.validation.constraints.Size;
 
 @Value
 public class ItemUpdateDto {
-    /**
-     * Краткое название
-     */
+    /** Краткое название */
     @Nullable
     @Size(max = 255)
     String name;
