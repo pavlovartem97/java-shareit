@@ -3,30 +3,28 @@ package ru.practicum.shareit.item.dto;
 import lombok.Value;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Value
-public class ItemDtoIn {
+public class ItemUpdateDto {
     /**
      * Краткое название
      */
-    @NotEmpty
+    @Nullable
     @Size(max = 255)
     String name;
 
     /**
      * Развернутое описание
      */
-    @NotEmpty
+    @Nullable
     @Size(max = 5000)
     String description;
 
     /**
      * Статус о том, доступна или нет вещь для аренды
      */
-    @NotNull
+    @Nullable
     Boolean available;
 
     @Nullable

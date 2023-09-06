@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.shareit.item.dto.CommentDtoIn;
-import ru.practicum.shareit.item.dto.ItemDtoIn;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -34,13 +35,13 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestBody @Valid ItemDtoIn dto,
+    public ResponseEntity<Object> addItem(@RequestBody @Valid ItemCreateDto dto,
                                           @RequestHeader(USER_ID_HEADER) long userId) {
         return itemClient.addItem(dto, userId);
     }
 
     @PatchMapping("{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestBody ItemDtoIn dto,
+    public ResponseEntity<Object> updateItem(@RequestBody @Valid ItemUpdateDto dto,
                                              @PathVariable("itemId") long itemId,
                                              @RequestHeader(USER_ID_HEADER) long userId) {
         return itemClient.updateItem(dto, itemId, userId);

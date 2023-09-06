@@ -6,9 +6,9 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDateTime;
 
-public class BookingDtoValidator implements ConstraintValidator<StartBeforeEndDateValid, BookDto> {
+public class BookingDtoValidator implements ConstraintValidator<BookDtoValid, BookDto> {
     @Override
-    public void initialize(StartBeforeEndDateValid constraintAnnotation) {
+    public void initialize(BookDtoValid constraintAnnotation) {
     }
 
     @Override
@@ -16,9 +16,9 @@ public class BookingDtoValidator implements ConstraintValidator<StartBeforeEndDa
         LocalDateTime start = bookingDto.getStart();
         LocalDateTime end = bookingDto.getEnd();
         LocalDateTime now = LocalDateTime.now();
-        if (start == null || end == null) {
+        if (start == null || end == null || bookingDto.getItemId() == null) {
             return false;
         }
-        return now.isBefore(start) && start.isBefore(end);
+        return (now.isBefore(start) || now.equals(start)) && start.isBefore(end);
     }
 }
